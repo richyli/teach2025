@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>統計結果頁</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="container">
+    <h1>統計結果頁</h1>
+    <p class="status">{{ csv_status }}</p>
+    <p>資料筆數：{{ total }}</p>
+
+    <section>
+      <h2>政黨統計</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>政黨</th><th>筆數</th></tr></thead>
+          <tbody>
+            {% for party, count in party_stats %}
+              <tr><td>{{ party }}</td><td>{{ count }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>縣市統計</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>縣市</th><th>筆數</th></tr></thead>
+          <tbody>
+            {% for city, count in city_stats %}
+              <tr><td>{{ city }}</td><td>{{ count }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p><a href="{{ url_for('index') }}">返回入口頁</a></p>
+  </main>
+</body>
+</html>
