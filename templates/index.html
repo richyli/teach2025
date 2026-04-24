@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>政治獻金資料入口</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="container">
+    <h1>政治獻金資料入口</h1>
+    <p class="status">{{ csv_status }}</p>
+    <p>資料筆數：{{ total }}</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <section>
+      <h2>1) 人名搜尋</h2>
+      <form method="get" action="{{ url_for('index') }}" class="row">
+        <input type="text" name="q" value="{{ query }}" placeholder="輸入姓名或關鍵字">
+        <button type="submit">搜尋</button>
+      </form>
+      {% if query %}
+        <p>關鍵字：{{ query }}，顯示前 {{ search_results|length }} 筆。</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                {% if search_results %}
+                  {% for key in search_results[0].keys() %}<th>{{ key }}</th>{% endfor %}
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in search_results %}
+                <tr>
+                  {% for value in row.values() %}<td>{{ value }}</td>{% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    </section>
+
+    <section>
+      <h2>2) 政黨統計（前 10）</h2>
+      <ol>
+        {% for party, count in party_stats[:10] %}
+          <li>{{ party }}：{{ count }}</li>
+        {% endfor %}
+      </ol>
+    </section>
+
+    <section>
+      <h2>3) 縣市統計（前 10）</h2>
+      <ol>
+        {% for city, count in city_stats[:10] %}
+          <li>{{ city }}：{{ count }}</li>
+        {% endfor %}
+      </ol>
+    </section>
+
+    <section>
+      <h2>CSV 上傳</h2>
+      <form method="post" action="{{ url_for('upload_csv') }}" enctype="multipart/form-data" class="row">
+        <input type="file" name="csv_file" accept=".csv">
+        <button type="submit">上傳</button>
+      </form>
+      <p>可上傳你從 GitHub 下載的 <code>A05_basic_all.csv</code>。</p>
+    </section>
+
+    <p><a href="{{ url_for('stats') }}">前往統計結果頁</a></p>
+  </main>
+</body>
+</html>
